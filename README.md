@@ -1,6 +1,6 @@
 # Jitsi Meet Logger
 
-**Jitsi Meet Logger ** is utility library for logging used in **Jitsi Meet** project. It doesn't have any dependancies or any specific **Jitsi Meet** code.
+**Jitsi Meet Logger** is utility library for logging used in **Jitsi Meet** project. It doesn't have any dependancies or any specific **Jitsi Meet** code.
 
 **Getting Started**
 
