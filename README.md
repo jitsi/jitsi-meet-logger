@@ -24,15 +24,15 @@ var logger = Logger.getLogger();
 
 * You can set the log level for all Logger instances. That way you can prevent the log messages with lower log level to be displayed.  
 ```
-Logger.setLogLevel(Logger.levels.INFO);
+logger.setLogLevel(Logger.levels.INFO);
 ```  
-This is the list of supported log levels(ordered):  
 
-    * TRACE  
-    * DEBUG  
-    * INFO  
-    * LOG  
-    * WARN  
-    * ERROR  
+This is the list of supported log levels(ordered):  
+  1. TRACE
+  2. DEBUG
+  3. INFO
+  4. LOG
+  5. WARN
+  6. ERROR
 
 For example if the log level is set to ```Logger.levels.INFO``` only messages with the following log levels are going to be displayed - info, log, warn and error.
