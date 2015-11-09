@@ -1,37 +1,40 @@
 {
-    "name": "jitsi-meet-logger",
-    "description": "A simple npm utility module for logging",
-    "author": {
-        "name": "Hristo Terezov",
-        "email": "hristo@jitsi.org"
-    },
-    "version": "0.1.1",
-    "stability": "unstable",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/jitsi/jitsi-meet-logger.git"
-    },
-    "keywords": [
-        "javascript",
-        "logging",
-        "simple"
-    ],
-    "main": "./lib/",
-    "scripts": {
-        "lint": "jshint ."
-    },
-    "dependencies": { },
-    "devDependencies": {
-        "precommit-hook": "^3.0.0"
-    },
-    "bugs": {
-        "url": "http://github.com/jitsi/jitsi-meet-logger/issues"
-    },
-    "pre-commit": [
-        "lint"
-    ],
-    "licenses": [{
-        "type": "Apache-2.0",
-        "url": "http://www.apache.org/licenses/LICENSE-2.0"
-    }]
+  "name": "jitsi-meet-logger",
+  "description": "A simple npm utility module for logging",
+  "author": {
+    "name": "Hristo Terezov",
+    "email": "hristo@jitsi.org"
+  },
+  "version": "0.1.1",
+  "stability": "unstable",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jitsi/jitsi-meet-logger.git"
+  },
+  "keywords": [
+    "javascript",
+    "logging",
+    "simple"
+  ],
+  "main": "./lib/",
+  "scripts": {
+    "lint": "jshint .",
+    "validate": "npm ls"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "precommit-hook": "^3.0.0"
+  },
+  "bugs": {
+    "url": "http://github.com/jitsi/jitsi-meet-logger/issues"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ]
 }
