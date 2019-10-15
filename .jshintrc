@@ -2,6 +2,7 @@
   "node": true,
 
   "curly": true,
+  "globals": { "window": true },
   "latedef": true,
   "quotmark": true,
   "undef": true,
