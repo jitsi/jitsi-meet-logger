@@ -23,8 +23,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "precommit-hook": "^3.0.0",
-    "jshint": "2.8.0"
+    "jshint": "^2.12.0",
+    "precommit-hook": "^3.0.0"
   },
   "bugs": {
     "url": "http://github.com/jitsi/jitsi-meet-logger/issues"
