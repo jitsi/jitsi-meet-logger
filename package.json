@@ -5,7 +5,7 @@
     "name": "Hristo Terezov",
     "email": "hristo@jitsi.org"
   },
-  "version": "0.2.0",
+  "version": "1.0.0",
   "stability": "unstable",
   "repository": {
     "type": "git",
@@ -23,8 +23,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "precommit-hook": "^3.0.0",
-    "jshint": "2.8.0"
+    "jshint": "^2.12.0",
+    "precommit-hook": "^3.0.0"
   },
   "bugs": {
     "url": "http://github.com/jitsi/jitsi-meet-logger/issues"
