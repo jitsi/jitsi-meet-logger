@@ -1,11 +1,11 @@
 {
-  "name": "jitsi-meet-logger",
+  "name": "@jitsi/logger",
   "description": "A simple npm utility module for logging",
   "author": {
     "name": "Hristo Terezov",
     "email": "hristo@jitsi.org"
   },
-  "version": "1.0.0",
+  "version": "2.0.0",
   "stability": "unstable",
   "repository": {
     "type": "git",
