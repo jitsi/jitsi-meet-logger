@@ -1,5 +1,5 @@
 {
-  "name": "jitsi-meet-logger",
+  "name": "@jitsi/logger",
   "description": "A simple npm utility module for logging",
   "author": {
     "name": "Hristo Terezov",
