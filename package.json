@@ -17,14 +17,17 @@
     "simple"
   ],
   "main": "./lib/",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
-    "validate": "npm ls"
+    "validate": "npm ls",
+    "create_types": "tsc --emitDeclarationOnly",
+    "prepack": "npm run create-types"
   },
-  "dependencies": {},
   "devDependencies": {
     "jshint": "^2.12.0",
-    "precommit-hook": "^3.0.0"
+    "precommit-hook": "^3.0.0",
+    "typescript": "^4.5.5"
   },
   "bugs": {
     "url": "http://github.com/jitsi/jitsi-meet-logger/issues"

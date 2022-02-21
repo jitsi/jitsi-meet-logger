@@ -4,3 +4,4 @@ node_modules
 *.iml
 .*.tmp
 .remote-sync.json
+lib/**/*.d.ts
