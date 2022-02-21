@@ -19,12 +19,13 @@
   "main": "./lib/",
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
-    "validate": "npm ls"
+    "validate": "npm ls",
+    "create_types": "tsc --emitDeclarationOnly"
   },
-  "dependencies": {},
   "devDependencies": {
     "jshint": "^2.12.0",
-    "precommit-hook": "^3.0.0"
+    "precommit-hook": "^3.0.0",
+    "typescript": "^4.5.5"
   },
   "bugs": {
     "url": "http://github.com/jitsi/jitsi-meet-logger/issues"
