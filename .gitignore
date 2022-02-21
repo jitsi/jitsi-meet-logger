@@ -5,3 +5,5 @@ node_modules
 .*.tmp
 .remote-sync.json
 lib/**/*.d.ts
+dist/
+.vscode

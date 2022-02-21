@@ -19,6 +19,8 @@
   "main": "./lib/",
   "types": "./lib/index.d.ts",
   "scripts": {
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
     "lint": "./node_modules/.bin/jshint .",
     "validate": "npm ls",
     "create_types": "tsc --emitDeclarationOnly"

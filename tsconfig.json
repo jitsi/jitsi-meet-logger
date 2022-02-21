@@ -3,8 +3,8 @@
     "target": "es6",
     "module": "es6",
     "declaration": true,
-    "declarationDir": "lib/",
-    "sourceMap": true,
+    "declarationDir": "dist/lib/",
+    "sourceMap": false,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -14,8 +14,13 @@
       "esnext",
       "dom"
     ],
-    "outDir": "dist/esm/",
+    "outDir": "dist/lib/",
   },
+  "include": [
+    "lib/**/*.js",
+    "lib/**/*.ts"
+  ],
   "exclude": [
+    "**/*.spec.ts"
   ]
 }
