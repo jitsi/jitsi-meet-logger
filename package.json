@@ -21,7 +21,8 @@
   "scripts": {
     "lint": "./node_modules/.bin/jshint .",
     "validate": "npm ls",
-    "create_types": "tsc --emitDeclarationOnly"
+    "create_types": "tsc --emitDeclarationOnly",
+    "prepack": "npm run create-types"
   },
   "devDependencies": {
     "jshint": "^2.12.0",
