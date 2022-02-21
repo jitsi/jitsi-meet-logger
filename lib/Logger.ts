@@ -108,7 +108,7 @@ export class Logger {
     /**
      * Adds given {@link LoggerTransport} instance to the list of global
      * transports which means that it'll be used by all {@link Logger}s
-     * @param {LoggerTransport} transport
+     * @param transport
      */
     static addGlobalTransport = ( transport: LoggerTransport ) => {
         if ( Logger._globalTransports.indexOf( transport ) === -1 ) {

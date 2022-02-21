@@ -47,7 +47,7 @@ export class LogCollector {
      * the batch log entry.
      *
      * @param logStorage an object which allows to store the logs collected
-     * @param  logStorage.storeLogs a method called when
+     * @param logStorage.storeLogs a method called when
      * this <tt>LogCollector</tt> requests log entry storage. The method's argument
      * is an array which can contain <tt>string</tt>s and <tt>object</tt>s. If given
      * item is an object it means that it's an aggregated message. That is a message
@@ -78,8 +78,6 @@ export class LogCollector {
      * arguments should be "stringified" with <tt>JSON.stringify</tt> when a log
      * message is composed. Note that objects logged on the error log level are
      * always stringified.
-     *
-     * @constructor
      */
     constructor( logStorage: LogStorage, options?: Options ) {
         this.logStorage = logStorage;
@@ -135,7 +133,7 @@ export class LogCollector {
         try {
             return JSON.stringify( someObject );
         } catch ( error ) {
-            return '[object with circular refs?]';
+            return "[object with circular refs?]";
         }
     };
 
@@ -148,7 +146,7 @@ export class LogCollector {
      * be logged.
      * @param timestamp - The {@code Date} when a message has been logged.
      *
-     * @return {string|null} a non-empty string representation of the log entry
+     * @return a non-empty string representation of the log entry
      * crafted from the log arguments. If the return value is <tt>null</tt> then
      * the message wil be discarded by this <tt>LogCollector</tt>.
      *
@@ -160,7 +158,7 @@ export class LogCollector {
         const processArg = ( arg: any ) => {
             // objects logged on error level are always converted to JSON
             if ( ( this.stringifyObjects || logLevel === Logger.levels.ERROR ) &&
-                typeof arg === 'object' ) {
+                typeof arg === "object" ) {
                 arg = this.stringify( arg );
             }
             parts.push( arg );
@@ -251,11 +249,11 @@ export class LogCollector {
 
     /**
      * Stores the next batch log entry in the log storage.
-     * @param {boolean} force enforce current logs batch to be stored or cached if
+     * @param force enforce current logs batch to be stored or cached if
      * there is anything to be logged, but the storage is not ready yet. One of
      * legitimate reasons to force is when the logs length exceeds size limit which
      * could result in truncation.
-     * @param {boolean} reschedule <tt>true</tt> if the next periodic task should be
+     * @param reschedule <tt>true</tt> if the next periodic task should be
      * scheduled after the log entry is stored. <tt>false</tt> will end the periodic
      * task cycle.
      */
