@@ -17,10 +17,9 @@
     "outDir": "lib/",
   },
   "include": [
-    "src/**/*.js",
     "src/**/*.ts"
   ],
   "exclude": [
-    "**/*.spec.ts"
+    "src/**/*.spec.ts"
   ]
 }

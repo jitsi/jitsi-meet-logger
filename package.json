@@ -13,9 +13,11 @@
   },
   "keywords": [
     "javascript",
+    "typescript",
     "logging",
     "simple"
   ],
+  "type": "module",
   "main": "./lib/",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -23,11 +25,22 @@
     "clean": "tsc --build --clean",
     "lint": "./node_modules/.bin/jshint .",
     "validate": "npm ls",
-    "create_types": "tsc --emitDeclarationOnly"
+    "create_types": "tsc --emitDeclarationOnly",
+    "test-with-jasmine": "jasmine-ts --config=jasmine.json",
+    "test-with-jest": "jest",
+    "test-with-jest-watch": "jest --watchAll"
   },
   "devDependencies": {
+    "@types/jasmine": "^3.10.3",
+    "@types/jest": "^27.4.0",
+    "jasmine": "^4.0.2",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jasmine-ts": "^0.4.0",
+    "jest": "^27.5.1",
     "jshint": "^2.12.0",
     "precommit-hook": "^3.0.0",
+    "ts-jest": "^27.1.3",
+    "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
   },
   "bugs": {

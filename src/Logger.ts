@@ -65,33 +65,35 @@ const levels = {
     "error": 5
 };
 
+export enum LevelConstants {
+    TRACE = "trace",
+    DEBUG = "debug",
+    INFO = "info",
+    LOG = "log",
+    WARN = "warn",
+    ERROR = "error"
+};
+
 export class Logger {
     /**
      * Enum for the supported log levels.
      */
-    public static levels = {
-        TRACE: "trace",
-        DEBUG: "debug",
-        INFO: "info",
-        LOG: "log",
-        WARN: "warn",
-        ERROR: "error"
-    };
+    static readonly levels = LevelConstants;
 
     /**
      * The default transport - console
      */
-    static consoleTransport: LoggerTransport = console;
+    static consoleTransport: LoggerTransport = console; // TODO: should this be private?
 
     /**
      * The array which stores currently registered global transports.
      */
-    private static _globalTransports: Array<LoggerTransport> = [ Logger.consoleTransport ];
+    static _globalTransports: Array<LoggerTransport> = [ Logger.consoleTransport ];
 
     /**
      * The global configuration options.
      */
-    private static globalOptions: Options = {};
+    static _globalOptions: Options = {};
 
     /**
      * Removes given {@link LoggerTransport} instance from the list of global
@@ -121,7 +123,7 @@ export class Logger {
      * even after other loggers are created.
      */
     static setGlobalOptions = ( options: Options ) => {
-        Logger.globalOptions = options || {};
+        Logger._globalOptions = options || {};
     };
 
     /**
@@ -130,7 +132,8 @@ export class Logger {
      * @returns JS object with info about the caller - method name, file location,
      * line and column.
      */
-    private static getCallerInfo = (): CallerInfo => {
+    // TODO: should this be private?
+    static getCallerInfo = (): CallerInfo => {
         var callerInfo: CallerInfo = {
             methodName: "",
             fileLocation: "",
@@ -172,7 +175,7 @@ export class Logger {
     * @param level the log level of the message. See the levels variable.
     * @param arguments array with arguments that will be logged.
     */
-    private static log() {
+    static __log() {
         var logger = arguments[ 0 ], level = arguments[ 1 ],
             args = Array.prototype.slice.call( arguments, 2 );
         if ( levels[ level ] < logger.level ) {
@@ -180,7 +183,7 @@ export class Logger {
         }
 
         const callerInfo
-            = !( logger.options.disableCallerInfo || Logger.globalOptions.disableCallerInfo ) &&
+            = !( logger.options.disableCallerInfo || Logger._globalOptions.disableCallerInfo ) &&
             Logger.getCallerInfo();
         const transports = Logger._globalTransports.concat( logger.transports );
         for ( let i = 0; i < transports.length; i++ ) {
@@ -206,6 +209,7 @@ export class Logger {
         }
     }
 
+    // TODO: should these be private?
     id?: string;
     options?: Options;
     transports?: Array<LoggerTransport>;
@@ -222,7 +226,7 @@ export class Logger {
      * method invocation should be included in the log. Defaults to false, so the
      * call site will be included.
      */
-    constructor( level: string, id?: string, transports?: Array<LoggerTransport>, options?: Options ) {
+    constructor( level: keyof typeof levels, id?: string, transports?: Array<LoggerTransport>, options?: Options ) {
         this.id = id;
         this.options = options || {};
         this.transports = transports || [];
@@ -230,7 +234,7 @@ export class Logger {
 
         var methods = Object.keys( levels );
         for ( let i = 0; i < methods.length; i++ ) {
-            this[ methods[ i ] ] = Logger.log.bind( null, this, methods[ i ] );
+            this[ methods[ i ] ] = Logger.__log.bind( null, this, methods[ i ] );
         }
     }
 
@@ -238,7 +242,7 @@ export class Logger {
      * Sets the log level for the logger.
      * @param level the new log level.
      */
-    setLevel = ( level: string ) => {
+    setLevel = ( level: keyof typeof levels ) => {
         this.level = levels[ level ];
     };
 }

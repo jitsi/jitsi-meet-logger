@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Logger, LoggerTransport, Options, log_method } from "./Logger";
+import { Logger, LoggerTransport, Options, log_method, LevelConstants } from "./Logger";
 import { LogCollector } from "./LogCollector";
 
 /**
@@ -28,7 +28,7 @@ const loggers: Array<Logger> = [];
 /**
  * Log level for the library.
  */
-let curLevel: string = Logger.levels.TRACE;
+let curLevel: LevelConstants = Logger.levels.TRACE;
 
 /**
  * Adds given {@link LoggerTransport} instance to the list of global
@@ -77,7 +77,7 @@ export const getUntrackedLogger = ( id?: string, transports?: Array<LoggerTransp
  * same id. Otherwise the operation will affect all loggers that don't
  * have id.
  */
-export const setLogLevelById = ( level: keyof typeof Logger.levels, id?: string ) => {
+export const setLogLevelById = ( level: LevelConstants, id?: string ) => {
     var l = id ? ( idLoggers[ id ] || [] ) : loggers;
     for ( var i = 0; i < l.length; i++ ) {
         l[ i ].setLevel( level );
@@ -88,7 +88,7 @@ export const setLogLevelById = ( level: keyof typeof Logger.levels, id?: string 
  * Changes the log level for all existing loggers.
  * @param level the new log level.
  */
-export const setLogLevel = ( level: keyof typeof Logger.levels ) => {
+export const setLogLevel = ( level: LevelConstants ) => {
     curLevel = level;
     var i = 0;
     for ( ; i < loggers.length; i++ ) {

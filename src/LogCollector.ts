@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Logger } from "./Logger";
+import { LevelConstants, Logger } from "./Logger";
 
 type LogStorage = {
     storeLogs: ( arg: Array<string | object> ) => void;
@@ -26,14 +26,46 @@ type Options = {
 };
 
 export class LogCollector {
+    // TODO: should this be private?
     logStorage: LogStorage;
+
+    // TODO: should this be private?
     stringifyObjects: any;
+
+    // TODO: should this be private?
     storeInterval: any;
+
+    // TODO: should this be private?
     maxEntryLength: any;
-    storeLogsIntervalID: any;
+
+    /**
+     * The ID of store logs interval if one is currently scheduled or
+     * <tt>null</tt> otherwise.
+     * @type {number|null}
+     */
+    // TODO: should this be private?
+    storeLogsIntervalID: number | null;
+
+    /**
+     * The log messages that are to be batched into log entry when
+     * {@link LogCollector._flush} method is called.
+     * @type {string[]}
+     */
+    // TODO: why does this claim to be a string[]?
     queue: Array<{ text: string, timestamp: Date, count: number }>;
+
+    /**
+     * The total length of all messages currently stored in the {@link queue}.
+     */
+    // TODO: should this be private?
     totalLen: number;
-    outputCache: Array<string>;
+
+    /**
+     * An array used to temporarily store log batches, before the storage gets
+     * ready.
+     */
+    // TODO: should this be private?
+    outputCache: Array<Array<string | object>>;
 
     /**
      * Creates new <tt>LogCollector</tt>. Class implements <tt>LoggerTransport</tt>
@@ -81,40 +113,21 @@ export class LogCollector {
      */
     constructor( logStorage: LogStorage, options?: Options ) {
         this.logStorage = logStorage;
-        this.stringifyObjects = options && options.stringifyObjects ? options.stringifyObjects : false;
-        this.storeInterval = options && options.storeInterval ? options.storeInterval : 30000;
-        this.maxEntryLength = options && options.maxEntryLength ? options.maxEntryLength : 10000;
+        this.stringifyObjects = options?.stringifyObjects || false;
+        this.storeInterval = options?.storeInterval || 30000;
+        this.maxEntryLength = options?.maxEntryLength || 10000;
+        this.storeLogsIntervalID = null;
+        this.queue = [];
+        this.totalLen = 0;
+        this.outputCache = [];
+
         // Bind the log method for each level to the corresponding method name
         // in order to implement "global log transport" object.
         Object.keys( Logger.levels ).forEach(
-            function ( logLevel: string ) {
-                var methodName = Logger.levels[ logLevel ];
-                this[ methodName ] = function () {
-                    this._log.apply( this, arguments );
-                }.bind( this, logLevel );
-            }.bind( this ) );
-        /**
-         * The ID of store logs interval if one is currently scheduled or
-         * <tt>null</tt> otherwise.
-         * @type {number|null}
-         */
-        this.storeLogsIntervalID = null;
-        /**
-         * The log messages that are to be batched into log entry when
-         * {@link LogCollector._flush} method is called.
-         * @type {string[]}
-         */
-        this.queue = [];
-        /**
-         * The total length of all messages currently stored in the {@link queue}.
-         * @type {number}
-         */
-        this.totalLen = 0;
-        /**
-         * An array used to temporarily store log batches, before the storage gets
-         * ready.
-         */
-        this.outputCache = [];
+            ( ( logLevel: string ) => {
+                const methodName = Logger.levels[ logLevel ];
+                this[ methodName ] = ( () => this._log.apply( this, arguments ) ).bind( this, logLevel );
+            } ).bind( this ) );
     }
 
     /**
@@ -149,10 +162,8 @@ export class LogCollector {
      * @return a non-empty string representation of the log entry
      * crafted from the log arguments. If the return value is <tt>null</tt> then
      * the message wil be discarded by this <tt>LogCollector</tt>.
-     *
-     * @protected
      */
-    protected formatLogMessage = ( logLevel: keyof typeof Logger.levels, timestamp?: Date, ...args: Array<string | null> ): string | null => {
+    protected formatLogMessage = ( logLevel: LevelConstants, timestamp?: Date, ...args: Array<string | null> ): string | null => {
         const parts: Array<string> = [];
 
         const processArg = ( arg: any ) => {
@@ -179,7 +190,7 @@ export class LogCollector {
      * The log method bound to each of the logging levels in order to implement
      * "global log transport" object.
      */
-    private _log = ( ...args: Array<unknown> ) => {
+    _log = ( ...args: Array<unknown> ) => {
         // var logLevel = arguments[0]; first argument is the log level
         const timestamp = args[ 1 ] as Date;
         const msg = this.formatLogMessage.apply( this, args );
@@ -205,47 +216,37 @@ export class LogCollector {
     };
 
     /**
-     * Starts periodical "store logs" task which will be triggered at the interval
-     * specified in the constructor options.
-     */
-    start = () => {
-        this._reschedulePublishInterval();
-    };
-
-    /**
      * Reschedules the periodical "store logs" task which will store the next batch
      * log entry in the storage.
      */
-    private _reschedulePublishInterval = () => {
+    _reschedulePublishInterval = () => {
         if ( this.storeLogsIntervalID ) {
             window.clearTimeout( this.storeLogsIntervalID );
             this.storeLogsIntervalID = null;
         }
         // It's actually a timeout, because it is rescheduled on every flush
         this.storeLogsIntervalID = window.setTimeout(
-            this._flush.bind(
-                this, false /* do not force */, true /* reschedule */ ),
+            this._flush.bind( this, false /* do not force */, true /* reschedule */ ),
             this.storeInterval );
     };
+
+    /**
+     * Starts periodical "store logs" task which will be triggered at the interval
+     * specified in the constructor options.
+     */
+    start = () => this._reschedulePublishInterval();
 
     /**
      * Call this method to flush the log entry buffer and store it in the log
      * storage immediately (given that the storage is ready).
      */
-    flush = () => {
-        this._flush(
-            false /* do not force, as it will not be stored anyway */,
-            true /* reschedule next update */ );
-    };
+    flush = () => this._flush( false /* do not force, as it will not be stored anyway */, true /* reschedule next update */ );
 
     /**
      * Stops the periodical "store logs" task and immediately stores any pending
      * log entries as a batch.
      */
-    stop = () => {
-        // Flush and stop publishing logs
-        this._flush( false /* do not force */, false /* do not reschedule */ );
-    };
+    stop = () => this._flush( false /* do not force */, false /* do not reschedule */ ); // Flush and stop publishing logs
 
     /**
      * Stores the next batch log entry in the log storage.
@@ -257,7 +258,7 @@ export class LogCollector {
      * scheduled after the log entry is stored. <tt>false</tt> will end the periodic
      * task cycle.
      */
-    private _flush = ( force: boolean, reschedule: boolean ) => {
+    _flush = ( force: boolean, reschedule: boolean ) => {
         // Publish only if there's anything to be logged
         if ( this.totalLen > 0 && ( this.logStorage.isReady() || force ) ) {
             // FIXME avoid truncating
@@ -266,7 +267,7 @@ export class LogCollector {
                 // Sends all cached logs
                 if ( this.outputCache.length ) {
                     this.outputCache.forEach(
-                        ( ( cachedQueue: any ) => {
+                        ( ( cachedQueue: Array<string | object> ) => {
                             this.logStorage.storeLogs( cachedQueue );
                         } ).bind( this )
                     );
@@ -276,7 +277,7 @@ export class LogCollector {
                 // Send current batch
                 this.logStorage.storeLogs( this.queue );
             } else {
-                this.outputCache.push( this.queue as any ); // TODO: is the output cache a string[]?
+                this.outputCache.push( this.queue );
             }
 
             this.queue = [];
