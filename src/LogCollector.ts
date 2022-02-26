@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LevelConstants, Logger } from "./Logger";
+import { LevelConstants, Logger } from './Logger';
 
 type LogStorage = {
     storeLogs: ( arg: Array<string | object> ) => void;
@@ -25,18 +25,21 @@ type Options = {
     stringifyObjects?: boolean;
 };
 
+/**
+ * LogCollector class
+ */
 export class LogCollector {
     // TODO: should this be private?
     logStorage: LogStorage;
 
     // TODO: should this be private?
-    stringifyObjects: any;
+    stringifyObjects: unknown;
 
     // TODO: should this be private?
-    storeInterval: any;
+    storeInterval: number;
 
     // TODO: should this be private?
-    maxEntryLength: any;
+    maxEntryLength: number;
 
     /**
      * The ID of store logs interval if one is currently scheduled or
@@ -146,7 +149,7 @@ export class LogCollector {
         try {
             return JSON.stringify( someObject );
         } catch ( error ) {
-            return "[object with circular refs?]";
+            return '[object with circular refs?]';
         }
     };
 
@@ -163,16 +166,17 @@ export class LogCollector {
      * crafted from the log arguments. If the return value is <tt>null</tt> then
      * the message wil be discarded by this <tt>LogCollector</tt>.
      */
+
     protected formatLogMessage = ( logLevel: LevelConstants, timestamp?: Date, ...args: Array<string | null> ): string | null => {
         const parts: Array<string> = [];
 
-        const processArg = ( arg: any ) => {
+        const processArg = ( arg: unknown ) => {
             // objects logged on error level are always converted to JSON
             if ( ( this.stringifyObjects || logLevel === Logger.levels.ERROR ) &&
-                typeof arg === "object" ) {
+                typeof arg === 'object' ) {
                 arg = this.stringify( arg );
             }
-            parts.push( arg );
+            parts.push( arg as string );
         };
 
         if ( timestamp ) {
@@ -183,7 +187,7 @@ export class LogCollector {
             processArg( arg );
         }
 
-        return parts.length ? parts.join( "," ) : null;
+        return parts.length ? parts.join( ',' ) : null;
     };
 
     /**
@@ -203,7 +207,7 @@ export class LogCollector {
             } else {
                 this.queue.push( {
                     text: msg,
-                    timestamp: timestamp,
+                    timestamp,
                     count: 1
                 } );
                 this.totalLen += msg.length;
@@ -224,6 +228,7 @@ export class LogCollector {
             window.clearTimeout( this.storeLogsIntervalID );
             this.storeLogsIntervalID = null;
         }
+
         // It's actually a timeout, because it is rescheduled on every flush
         this.storeLogsIntervalID = window.setTimeout(
             this._flush.bind( this, false /* do not force */, true /* reschedule */ ),
@@ -240,13 +245,17 @@ export class LogCollector {
      * Call this method to flush the log entry buffer and store it in the log
      * storage immediately (given that the storage is ready).
      */
-    flush = () => this._flush( false /* do not force, as it will not be stored anyway */, true /* reschedule next update */ );
+    flush = () => this._flush(
+        false /* do not force, as it will not be stored anyway */,
+        true /* reschedule next update */ );
 
     /**
      * Stops the periodical "store logs" task and immediately stores any pending
      * log entries as a batch.
      */
-    stop = () => this._flush( false /* do not force */, false /* do not reschedule */ ); // Flush and stop publishing logs
+    stop = () => this._flush(
+        false /* do not force */,
+        false /* do not reschedule */ ); // Flush and stop publishing logs
 
     /**
      * Stores the next batch log entry in the log storage.
@@ -271,9 +280,11 @@ export class LogCollector {
                             this.logStorage.storeLogs( cachedQueue );
                         } ).bind( this )
                     );
+
                     // Clear the cache
                     this.outputCache = [];
                 }
+
                 // Send current batch
                 this.logStorage.storeLogs( this.queue );
             } else {

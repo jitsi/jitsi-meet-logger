@@ -1,8 +1,10 @@
-import * as exported from './index';
 import { Logger, LoggerTransport, Options } from './Logger';
+import * as exported from './index';
 
 describe( 'index tests', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getGlobalTransports = (): Array<LoggerTransport> => ( Logger as any )._globalTransports;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const getGlobalOptions = (): Options => ( Logger as any )._globalOptions;
 
     const resetGlobalTransports = () => {
@@ -14,7 +16,7 @@ describe( 'index tests', () => {
 
     const resetGlobalOptions = () => {
         exported.setGlobalOptions( null );
-    }
+    };
 
     beforeEach( resetGlobalOptions );
     beforeEach( resetGlobalTransports );

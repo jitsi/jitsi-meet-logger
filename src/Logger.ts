@@ -13,29 +13,35 @@
  * limitations under the License.
  */
 
-export type log_method = ( ...args: Array<any> ) => void;
+export type log_method = ( ...args: Array<unknown> ) => void;
 
 export type LoggerTransport = {
+
     /**
      * method called to log on {@link Logger.levels.TRACE } logging level
      */
     trace: log_method;
+
     /**
      * method called to log on {@link Logger.levels.DEBUG } logging level
      */
     debug: log_method;
+
     /**
      * method called to log on {@link Logger.levels.INFO } logging level
      */
     info: log_method;
+
     /**
      * method called to log on {@link Logger.levels.LOG } logging level
      */
     log: log_method;
+
     /**
      * method called to log on {@link Logger.levels.WARN } logging level
      */
     warn: log_method;
+
     /**
      * method called to log on {@link Logger.levels.ERROR } logging level
      */
@@ -57,23 +63,26 @@ export type Options = {
  * Ordered log levels.
  */
 const levels = {
-    "trace": 0,
-    "debug": 1,
-    "info": 2,
-    "log": 3,
-    "warn": 4,
-    "error": 5
+    trace: 0,
+    debug: 1,
+    info: 2,
+    log: 3,
+    warn: 4,
+    error: 5
 };
 
 export enum LevelConstants {
-    TRACE = "trace",
-    DEBUG = "debug",
-    INFO = "info",
-    LOG = "log",
-    WARN = "warn",
-    ERROR = "error"
-};
+    TRACE = 'trace',
+    DEBUG = 'debug',
+    INFO = 'info',
+    LOG = 'log',
+    WARN = 'warn',
+    ERROR = 'error'
+}
 
+/**
+ * Logger
+ */
 export class Logger {
     /**
      * Enum for the supported log levels.
@@ -101,7 +110,7 @@ export class Logger {
      * @param transport
      */
     static removeGlobalTransport = ( transport: LoggerTransport ) => {
-        var transportIdx = Logger._globalTransports.indexOf( transport );
+        const transportIdx = Logger._globalTransports.indexOf( transport );
         if ( transportIdx !== -1 ) {
             Logger._globalTransports.splice( transportIdx, 1 );
         }
@@ -134,30 +143,31 @@ export class Logger {
      */
     // TODO: should this be private?
     static getCallerInfo = (): CallerInfo => {
-        var callerInfo: CallerInfo = {
-            methodName: "",
-            fileLocation: "",
+        const callerInfo: CallerInfo = {
+            methodName: '',
+            fileLocation: '',
             line: null,
             column: null
         };
-        //gets the part of the stack without the logger wrappers
-        var error = new Error();
-        var stack = error.stack ? error.stack.split( "\n" ) : [];
+
+        // gets the part of the stack without the logger wrappers
+        const error = new Error();
+        const stack = error.stack ? error.stack.split( '\n' ) : [];
         if ( !stack || stack.length < 3 ) {
             return callerInfo;
         }
-        var m = null;
+        let m = null;
         if ( stack[ 3 ] ) {
             m = stack[ 3 ].match( /\s*at\s*(.+?)\s*\((\S*)\s*:(\d*)\s*:(\d*)\)/ );
         }
         if ( !m || m.length <= 4 ) {
-            //Firefox && Safari
-            if ( stack[ 2 ].indexOf( "log@" ) === 0 ) {
-                //Safari
-                callerInfo.methodName = stack[ 3 ].substr( 0, stack[ 3 ].indexOf( "@" ) );
+            // Firefox && Safari
+            if ( stack[ 2 ].indexOf( 'log@' ) === 0 ) {
+                // Safari
+                callerInfo.methodName = stack[ 3 ].substr( 0, stack[ 3 ].indexOf( '@' ) );
             } else {
-                //Firefox
-                callerInfo.methodName = stack[ 2 ].substr( 0, stack[ 2 ].indexOf( "@" ) );
+                // Firefox
+                callerInfo.methodName = stack[ 2 ].substr( 0, stack[ 2 ].indexOf( '@' ) );
             }
             return callerInfo;
         }
@@ -167,7 +177,7 @@ export class Logger {
         callerInfo.line = m[ 3 ];
         callerInfo.column = m[ 4 ];
         return callerInfo;
-    }
+    };
 
     /**
     * Logs messages using the transports and level from the logger.
@@ -176,8 +186,9 @@ export class Logger {
     * @param arguments array with arguments that will be logged.
     */
     static __log() {
-        var logger = arguments[ 0 ], level = arguments[ 1 ],
-            args = Array.prototype.slice.call( arguments, 2 );
+        const logger = arguments[ 0 ];
+        const level = arguments[ 1 ];
+        const args = Array.prototype.slice.call( arguments, 2 );
         if ( levels[ level ] < logger.level ) {
             return;
         }
@@ -189,17 +200,17 @@ export class Logger {
         for ( let i = 0; i < transports.length; i++ ) {
             const t = transports[ i ];
             const l = t[ level ];
-            if ( l && typeof ( l ) === "function" ) {
-                var logPrefixes = [];
+            if ( l && typeof l === 'function' ) {
+                const logPrefixes = [];
 
                 logPrefixes.push( new Date().toISOString() );
 
                 if ( logger.id ) {
-                    logPrefixes.push( "[" + logger.id + "]" );
+                    logPrefixes.push( `[${ logger.id }]` );
                 }
 
                 if ( callerInfo && callerInfo.methodName.length > 1 ) {
-                    logPrefixes.push( "<" + callerInfo.methodName + ">: " );
+                    logPrefixes.push( `<${ callerInfo.methodName }>: ` );
                 }
 
                 const fullLogParts = logPrefixes.concat( args );
@@ -232,7 +243,8 @@ export class Logger {
         this.transports = transports || [];
         this.level = levels[ level ];
 
-        var methods = Object.keys( levels );
+        const methods = Object.keys( levels );
+
         for ( let i = 0; i < methods.length; i++ ) {
             this[ methods[ i ] ] = Logger.__log.bind( null, this, methods[ i ] );
         }

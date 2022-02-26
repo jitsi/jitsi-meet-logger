@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Logger, LoggerTransport, Options, log_method, LevelConstants } from "./Logger";
-import { LogCollector } from "./LogCollector";
+import { LogCollector } from './LogCollector';
+import { Logger, LoggerTransport, Options, log_method, LevelConstants } from './Logger';
 
 /**
  * Map with the created loggers with ID.
@@ -53,22 +53,23 @@ export const setGlobalOptions = ( options: Options ) => Logger.setGlobalOptions(
  * @arguments the same as Logger constructor
  */
 export const getLogger = ( id?: string, transports?: Array<LoggerTransport>, options?: Options ) => {
-    var logger = new Logger( curLevel, id, transports, options );
+    const logger = new Logger( curLevel, id, transports, options );
+
     if ( id ) {
         idLoggers[ id ] = idLoggers[ id ] || [];
         idLoggers[ id ].push( logger );
     } else {
         loggers.push( logger );
     }
+
     return logger;
 };
 
 /**
  * Creates a new Logger, without keeping track of it in the loggers list
  */
-export const getUntrackedLogger = ( id?: string, transports?: Array<LoggerTransport>, options?: Options ): Logger => {
-    return new Logger( curLevel, id, transports, options );
-};
+export const getUntrackedLogger = ( id?: string, transports?: Array<LoggerTransport>, options?: Options ): Logger =>
+    new Logger( curLevel, id, transports, options );
 
 /**
  * Changes the log level for the existing loggers by id.
@@ -78,8 +79,8 @@ export const getUntrackedLogger = ( id?: string, transports?: Array<LoggerTransp
  * have id.
  */
 export const setLogLevelById = ( level: LevelConstants, id?: string ) => {
-    var l = id ? ( idLoggers[ id ] || [] ) : loggers;
-    for ( var i = 0; i < l.length; i++ ) {
+    const l = id ? ( idLoggers[ id ] || [] ) : loggers;
+    for ( let i = 0; i < l.length; i++ ) {
         l[ i ].setLevel( level );
     }
 };
@@ -90,15 +91,14 @@ export const setLogLevelById = ( level: LevelConstants, id?: string ) => {
  */
 export const setLogLevel = ( level: LevelConstants ) => {
     curLevel = level;
-    var i = 0;
-    for ( ; i < loggers.length; i++ ) {
-        loggers[ i ].setLevel( level );
+    for ( const l of loggers ) {
+        l.setLevel( level );
     }
 
-    for ( var id in idLoggers ) {
-        var l = idLoggers[ id ] || [];
-        for ( i = 0; i < l.length; i++ ) {
-            l[ i ].setLevel( level );
+    for ( const id of Object.keys( idLoggers ) ) {
+        const loggers = idLoggers[ id ];
+        for ( const l of loggers ) {
+            l.setLevel( level );
         }
     }
 };
