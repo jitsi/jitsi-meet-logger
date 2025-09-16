@@ -5,7 +5,7 @@
     "name": "Hristo Terezov",
     "email": "hristo@jitsi.org"
   },
-  "version": "2.1.0",
+  "version": "2.1.1",
   "stability": "unstable",
   "repository": {
     "type": "git",
